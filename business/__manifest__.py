@@ -17,5 +17,5 @@
     ],
     # 'qweb': ['static/src/xml/*.xml'],
     'installable': True,
-    'application': False,
+    'application': True,
 }
