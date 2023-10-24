@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="real_estate_form_view" model="ir.ui.view">
+            <field name="name">real.estate.form.view</field>
+            <field name="model">real.estate</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Cancel" type="object" states="new,offer_received,offer_accepted" name="cancel_button"/>
+                        <button string="Sold" type="object" states="new,offer_received,offer_accepted" name="sold_button"/>
+                        <field name="status" widget="statusbar" statusbar_visible="new,offer_received,offer_accepted,sold,cancel"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                            <field name="tags" widget="many2many_tags"/>
+                            <group>
+                                <group>
+                                    <field name="property_type"/>
+                                    <field name="postcode"/>
+                                    <field name="date_availability"/>
+                                </group>
+                                <group>
+                                    <field name="expected_price"/>
+                                    <field name="selling_price"/>
+                                    <field name="best_price"/>
+                                </group>
+                            </group>
+                        </div>
+                        <notebook>
+                            <page name="description" string="Description">
+                                <group>
+                                    <group>
+                                        <field name="description"/>
+                                        <field name="bedrooms"/>
+                                        <field name="living_area"/>
+                                        <field name="facades"/>
+                                        <field name="garage"/>
+                                        <field name="garden"/>
+                                        <field name="garden_area"/>
+                                        <field name="garden_orientation"/>
+                                        <field name="total_area"/>
+                                    </group>
+                                    <group>
+                                        <field name="active"/>
+                                        <field name="status"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="offers" string="Offers">
+                                <field name="offers" widget="one2many_list"/>
+                            </page>
+                            <page name="other_info" string="Other Information">
+                                <group>
+                                    <group>
+                                        <field name="salesperson" string="Salesman"/>
+                                        <field name="buyer"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="real_estate_tree_view" model="ir.ui.view">
+            <field name="name">real.estate.tree.view</field>
+            <field name="model">real.estate</field>
+            <field name="arch" type="xml">
+                <tree string="Real Estate">
+                    <field name="name"/>
+                    <field name="postcode"/>
+                    <field name="bedrooms"/>
+                    <field name="living_area"/>
+                    <field name="expected_price"/>
+                    <field name="selling_price"/>
+                    <field name="date_availability"/>
+                    <field name="property_type"/>
+                    <field name="tags" widget="many2many_tags"/>
+                    
+                </tree>
+            </field>
+        </record>
+        <record id="real_estate_search_view" model="ir.ui.view">
+            <field name="name">real_estate_search_view</field>
+            <field name="model">real.estate</field>
+            <field name="arch" type="xml">
+                <search string="Real Estate Search">
+                    <field name="name" string="Title"/>
+                    <field name="postcode"/>
+                    <field name="expected_price"/>
+                    <field name="bedrooms"/>
+                    <field name="living_area"/>
+                    <field name="facades"/>
+                    <field name="property_type"/>
+                    <group expand="0" string="Filters">
+                        <filter name="status_filter" string="Available Properties(Status=New,Offer Received)"
+                                domain="[ '|', ('status', '=', 'new'), ('status', '=', 'offer_received')]"/>
+                    </group>
+                    <group expand="0" string="Group By">
+                        <filter name="postcode_group" string="Post Code" context="{'group_by': 'postcode'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="action_real_estate" model="ir.actions.act_window">
+            <field name="name">Real Estate</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">real.estate</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('real_estate_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('real_estate_form_view')})]"/>
+            <field name="search_view_id" ref="real_estate_search_view"/>
+        </record>
+    </data>
+</odoo>

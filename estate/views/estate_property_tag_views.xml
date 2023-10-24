@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="property_tag_form_view" model="ir.ui.view">
+            <field name="name">property.tag.form.view</field>
+            <field name="model">property.tag</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="title">
+                            <h1><field name="name"/></h1>
+                            <field name="color" widget="colorpicker"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="property_tag_tree_view" model="ir.ui.view">
+            <field name="name">property.tag.tree.view</field>
+            <field name="model">property.tag</field>
+            <field name="arch" type="xml">
+                <tree string="Property Tag">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_property_tag" model="ir.actions.act_window">
+            <field name="name">Property Tag</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">property.tag</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('property_tag_tree_view')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('property_tag_form_view')})]"/>
+        </record>
+    </data>
+</odoo>
