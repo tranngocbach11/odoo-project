@@ -1,26 +1,29 @@
 from odoo import api, models, tools, fields, _
 from odoo.exceptions import UserError, ValidationError
 
-class PurchasePlus(models.Model):
+class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
     _description = "Extend the purchase model"
 
-    auto_generated = fields.Boolean(string='Auto Generated Purchase Order', copy=False, default=True)
-    auto_sale_order_id = fields.Many2one('sale.order', string='Source Sales Order', readonly=True, copy=False)
-
-    @api.model
-    def create(self, vals):
-        res = super(PurchasePlus, self).create(vals)
-
-        sale_order_vals = {
-            'partner_id': res.partner_id.id,
-            'order_line': [(0, 0, {
-                'product_id': line.product_id.id,
-                'name': line.name,
-                'product_uom': line.product_uom.id,
-                'price_unit': line.price_unit,
-            }) for line in res.order_line]
-        }
-        sale_order = self.env['sale.order'].create(sale_order_vals)
-
+    def button_confirm(self):
+        """Override the button confirm function to create a SO
+        for the corresponding company when confirming the PO."""
+        res = super(PurchaseOrder, self).button_confirm()
+        company_id = self.env['res.company'].search(
+            [('name', '=', self.partner_id.name)], limit=1)
+        if company_id:
+            sale_order_vals = {
+                'partner_id': self.partner_id.id,
+                'company_id': company_id.id,
+                'client_order_ref': self.name,
+                'order_line': [(0, 0, {
+                    'product_id': rec.product_id.id,
+                    'product_uom_qty': rec.product_qty,
+                    'price_unit': rec.price_unit,
+                    'tax_id': [(6, 0, rec.taxes_id.ids)],  # Chuyển đổi danh sách các ID sang kiểu tuple (6, 0, [ids])
+                    'price_subtotal': rec.price_subtotal
+                }) for rec in self.order_line]
+            }
+            self.env['sale.order'].sudo().create(sale_order_vals)
         return res
+
